@@ -21,14 +21,13 @@ The dependency specification is provided in [`requirement.txt`](requirement.txt)
 | Component | Version / configuration |
 | :--- | :--- |
 | Operating system | Ubuntu 20.04.5 LTS |
-| Conda environment | `yu` |
 | Python | 3.8.0 |
 | PyTorch | 2.1.1+cu121 |
 | TorchVision | 0.16.1+cu121 |
 | CUDA | 12.1 |
 | NumPy | 1.24.4 |
 | pandas | 2.0.3 |
-| GPU | 2 × NVIDIA GeForce RTX 3090, 24 GB each |
+| GPU | 4 × NVIDIA GeForce RTX 3090, 24 GB each |
 
 ```bash
 conda activate yu
