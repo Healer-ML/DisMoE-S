@@ -42,11 +42,10 @@ The training interface contains handlers for the following micro-expression data
 | Dataset | Script identifier | Evaluation protocol |
 | :--- | :--- | :--- |
 | CASME II | `casme2` | Subject-independent LOSO |
-| SAMM | `SAMM` | Subject-independent LOSO; 3- or 5-class setting |
+| SAMM | `SAMM` | Subject-independent LOSO|
 | SMIC | `SMIC` | Subject-independent LOSO |
 | CAS(ME)<sup>3</sup> | `CASME3` | Subject-independent LOSO; configurable class setting |
 | MEVIEW | `meview` | Subject-independent LOSO |
-| DFME | `DFME` | Predefined training / validation split |
 
 Dataset files and cropped face-frame directories are not included. They should be supplied locally through the `root_path` and `label_path` arguments used by the training interface.
 
@@ -81,11 +80,8 @@ train_queue.sh <gpu_id> <class_count>
 
 <div align="center">
   <img src="assets/DisMoE_overview.png" alt="DisMoE model architecture" width="98%">
+    <em>Overview of the DisMoE framework used by the training experiments.</em>
 </div>
-
-<p align="center">
-  <em>Overview of the DisMoE framework used by the training experiments.</em>
-</p>
 
 ## 5. Repository Structure
 
