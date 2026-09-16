@@ -1,8 +1,8 @@
 <div align="center">
 
-# DisMoE-C-S
+# DisMoE
 
-### Training Environment, Datasets, and Launchers
+### Training Resources for DisMoE-C/S
 
 <p>
   <img src="https://img.shields.io/badge/Python-3.8-34495e?style=flat-square" alt="Python 3.8">
@@ -14,9 +14,9 @@
 
 ---
 
-## Environment
+## 1. Environment
 
-The following configuration is recorded from the training server:
+The dependency specification is provided in [`requirement.txt`](requirement.txt). The recorded training configuration is:
 
 | Component | Version / configuration |
 | :--- | :--- |
@@ -30,18 +30,16 @@ The following configuration is recorded from the training server:
 | pandas | 2.0.3 |
 | GPU | 2 × NVIDIA GeForce RTX 3090, 24 GB each |
 
-Example environment activation:
-
 ```bash
 conda activate yu
-python --version
+pip install -r requirement.txt
 ```
 
-## Datasets
+## 2. Datasets
 
-The training entry points currently support the following datasets:
+The training interface contains handlers for the following micro-expression datasets:
 
-| Dataset | Identifier used by the scripts | Annotation / split |
+| Dataset | Script identifier | Evaluation protocol |
 | :--- | :--- | :--- |
 | CASME II | `casme2` | Subject-independent LOSO |
 | SAMM | `SAMM` | Subject-independent LOSO; 3- or 5-class setting |
@@ -50,47 +48,64 @@ The training entry points currently support the following datasets:
 | MEVIEW | `meview` | Subject-independent LOSO |
 | DFME | `DFME` | Predefined training / validation split |
 
-Dataset files and face-frame directories should be prepared locally and passed through the corresponding `root_path` and `label_path` arguments. No dataset files are included in this repository.
+Dataset files and cropped face-frame directories are not included. They should be supplied locally through the `root_path` and `label_path` arguments used by the training interface.
 
-## Training Entry Points
+## 3. Training Interface
 
-The public repository keeps the Python file layout while omitting the implementation contents. The following files correspond to the training entry points used on the server:
+The code namespace is consolidated under a single `DisMoE/` directory:
 
 | File | Role |
 | :--- | :--- |
-| `scripts/Ad-TMM/main.py` | Main training entry point for the current experiment branch |
-| `scripts/Ad-TMM/option.py` | Command-line arguments and training configuration |
-| `scripts/Ad-TMM/train_epoch.py` | Epoch-level training and validation interface |
-| `scripts/Ad-TMM/data_me.py` | Dataset loading interface |
-| `scripts/Ad-TMM/data_me2.py` | Alternative dataset loading interface |
-| `scripts/DisMoE/main.py` | Main training entry point for the DisMoE branch |
-| `scripts/DisMoE/option.py` | DisMoE training arguments |
-| `scripts/DisMoE/train_epoch.py` | DisMoE epoch-level training interface |
-| `scripts/TMM-ab/main.py` | Ablation experiment entry point |
-| `scripts/TMM-ab/option.py` | Ablation experiment arguments |
-| `scripts/TMM-ab/train_epoch.py` | Ablation training interface |
-| `scripts/me-MoE_cas3/main.py` | CAS(ME)<sup>3</sup> experiment entry point |
-| `scripts/me-MoE_cas3/option.py` | CAS(ME)<sup>3</sup> experiment arguments |
-| `scripts/me-MoE_cas3/train_epoch.py` | CAS(ME)<sup>3</sup> training interface |
+| [`DisMoE/main.py`](DisMoE/main.py) | Training entry point |
+| [`DisMoE/option.py`](DisMoE/option.py) | Command-line configuration |
+| [`DisMoE/model.py`](DisMoE/model.py) | Model interface |
+| [`DisMoE/train_epoch.py`](DisMoE/train_epoch.py) | Epoch-level training interface |
+| [`DisMoE/data_me.py`](DisMoE/data_me.py) | Dataset loading interface |
+| [`DisMoE/data_me2.py`](DisMoE/data_me2.py) | Alternative dataset loading interface |
 
-## Server Launchers
-
-The following launchers were used for server-side experiments:
+Server-side launcher interfaces are kept at the repository root:
 
 | Launcher | Purpose |
 | :--- | :--- |
-| `scripts/retrain7.sh` | Repeated SAMM retraining over fusion settings and seeds |
-| `scripts/run_samm_full_gpu_queue.sh` | Multi-GPU SAMM training queue for 3- or 5-class experiments |
-| `scripts/queue_240.sh` | Queued ablation runs with GPU assignment and output tracking |
+| [`train_samm.sh`](train_samm.sh) | SAMM training launcher |
+| [`train_queue.sh`](train_queue.sh) | Multi-GPU training queue launcher |
 
-Typical launcher arguments are:
+Typical argument patterns used by the server launchers are:
 
 ```text
-retrain7.sh <fusion_method> <seed> <output_directory>
-run_samm_full_gpu_queue.sh <gpu_id> <class_count>
-queue_240.sh <gpu_id> <wait_name> <run_spec> ...
+train_samm.sh --dataset SAMM --root_path <dataset_root> --label_path <annotation_file>
+train_queue.sh <gpu_id> <class_count>
 ```
 
-## Public Snapshot
+## 4. Model Architecture
 
-The `.py` files in `scripts/` are intentionally empty placeholders. The implementation remains on the private training server and is not included in this public snapshot.
+<div align="center">
+  <img src="assets/DisMoE_overview.png" alt="DisMoE model architecture" width="98%">
+</div>
+
+<p align="center">
+  <em>Overview of the DisMoE framework used by the training experiments.</em>
+</p>
+
+## 5. Repository Structure
+
+```text
+.
+├── DisMoE/
+│   ├── data_me.py
+│   ├── data_me2.py
+│   ├── main.py
+│   ├── model.py
+│   ├── option.py
+│   └── train_epoch.py
+├── assets/
+│   └── DisMoE_overview.png
+├── requirement.txt
+├── train_queue.sh
+├── train_samm.sh
+└── README.md
+```
+
+## 6. Public Code Scope
+
+The Python and shell files in this repository are structural placeholders without implementation code. The complete implementation and server-specific paths remain on the private training server.
