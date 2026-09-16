@@ -81,7 +81,6 @@ train_queue.sh <gpu_id> <class_count>
   <img src="assets/DisMoE_overview.png"
        alt="Overall architecture of DisMoE"
        width="94%"><br>
-  <sub><em>Overview of the DisMoE framework for apex-free micro-expression recognition.</em></sub>
 </div>
 
 ## 5. Repository Structure
