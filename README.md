@@ -21,14 +21,13 @@ The dependency specification is provided in [`requirement.txt`](requirement.txt)
 | Component | Version / configuration |
 | :--- | :--- |
 | Operating system | Ubuntu 20.04.5 LTS |
-| Conda environment | `yu` |
 | Python | 3.8.0 |
 | PyTorch | 2.1.1+cu121 |
 | TorchVision | 0.16.1+cu121 |
 | CUDA | 12.1 |
 | NumPy | 1.24.4 |
 | pandas | 2.0.3 |
-| GPU | 2 × NVIDIA GeForce RTX 3090, 24 GB each |
+| GPU | 4 × NVIDIA GeForce RTX 3090, 24 GB each |
 
 ```bash
 conda activate yu
@@ -42,11 +41,10 @@ The training interface contains handlers for the following micro-expression data
 | Dataset | Script identifier | Evaluation protocol |
 | :--- | :--- | :--- |
 | CASME II | `casme2` | Subject-independent LOSO |
-| SAMM | `SAMM` | Subject-independent LOSO; 3- or 5-class setting |
+| SAMM | `SAMM` | Subject-independent LOSO|
 | SMIC | `SMIC` | Subject-independent LOSO |
 | CAS(ME)<sup>3</sup> | `CASME3` | Subject-independent LOSO; configurable class setting |
 | MEVIEW | `meview` | Subject-independent LOSO |
-| DFME | `DFME` | Predefined training / validation split |
 
 Dataset files and cropped face-frame directories are not included. They should be supplied locally through the `root_path` and `label_path` arguments used by the training interface.
 
@@ -80,8 +78,10 @@ train_queue.sh <gpu_id> <class_count>
 ## 4. Model Architecture
 
 <div align="center">
-  <img src="assets/DisMoE_overview.png" alt="DisMoE model architecture" width="98%"><br>
-  <sub><em>Overview of the DisMoE framework used by the training experiments.</em></sub>
+  <img src="assets/DisMoE_overview.png"
+       alt="Overall architecture of DisMoE"
+       width="94%"><br>
+  <sub><em>Overall architecture of DisMoE used by the training experiments.</em></sub>
 </div>
 
 ## 5. Repository Structure
