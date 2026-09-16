@@ -1,78 +1,96 @@
 <div align="center">
 
-# DisMoE-S
+# DisMoE-C-S
 
-### Temporal Expert Routing and Distillation for Apex-Free Micro-Expression Recognition
+### Training Environment, Datasets, and Launchers
 
 <p>
-  <a href="https://github.com/Healer-ML/DisMoE-S">
-    <img src="https://img.shields.io/badge/Task-Micro--Expression%20Recognition-34495e?style=flat-square" alt="Task">
-  </a>
-  <a href="https://github.com/Healer-ML/DisMoE-S">
-    <img src="https://img.shields.io/badge/Setting-Apex--Free-5b7c99?style=flat-square" alt="Setting">
-  </a>
-  <a href="https://github.com/Healer-ML/DisMoE-S">
-    <img src="https://img.shields.io/badge/Framework-PyTorch-8c6d62?style=flat-square" alt="Framework">
-  </a>
+  <img src="https://img.shields.io/badge/Python-3.8-34495e?style=flat-square" alt="Python 3.8">
+  <img src="https://img.shields.io/badge/PyTorch-2.1.1%2BCUDA%2012.1-5b7c99?style=flat-square" alt="PyTorch 2.1.1 with CUDA 12.1">
+  <img src="https://img.shields.io/badge/GPU-RTX%203090-8c6d62?style=flat-square" alt="RTX 3090">
 </p>
 
 </div>
-
-<p align="center">
-  A temporal mixture-of-experts framework for recognizing subtle facial expressions without apex-frame annotations.
-</p>
 
 ---
 
-## Abstract
+## Environment
 
-Micro-expression recognition aims to identify genuine emotional states from facial movements that are subtle, localized, and short-lived. Existing approaches often rely on apex-frame annotations or fixed temporal priors, which limits their applicability in apex-free settings.
+The following configuration is recorded from the training server:
 
-We propose **DisMoE**, a temporal expert routing and distillation framework for apex-free micro-expression recognition. The method uses the onset frame as a temporal reference and constructs multiple motion observations within the onset–offset interval. Each observation is assigned to an independently parameterized temporal expert, while a sample-adaptive routing network learns how to combine their complementary evidence. Frame-level distillation further transfers knowledge from the fused representation back to individual experts, improving the consistency of temporal predictions.
+| Component | Version / configuration |
+| :--- | :--- |
+| Operating system | Ubuntu 20.04.5 LTS |
+| Conda environment | `yu` |
+| Python | 3.8.0 |
+| PyTorch | 2.1.1+cu121 |
+| TorchVision | 0.16.1+cu121 |
+| CUDA | 12.1 |
+| NumPy | 1.24.4 |
+| pandas | 2.0.3 |
+| GPU | 2 × NVIDIA GeForce RTX 3090, 24 GB each |
 
-## Contributions
+Example environment activation:
 
-1. **Apex-free temporal modeling.** Dynamic Interval Sampling (DIS) constructs onset-referenced motion inputs without requiring apex annotations.
-2. **Slot-specific temporal experts.** Independently parameterized experts capture complementary motion patterns from different temporal positions.
-3. **Adaptive expert fusion.** The Frame-level Expert Routing Module (FERM) uses a Frame-wise Routing Network (FRN) to perform dense, sample-adaptive fusion.
-4. **Knowledge transfer across experts.** Frame-level Distillation (FD) transfers complementary information from the fused branch to individual temporal experts.
+```bash
+conda activate yu
+python --version
+```
 
-## Method Overview
+## Datasets
 
-The framework contains four main stages:
+The training entry points currently support the following datasets:
 
-| Stage | Module | Function |
-| :---: | :--- | :--- |
-| 1 | Dynamic Interval Sampling | Samples onset-referenced observations within the onset–offset interval. |
-| 2 | Continuous Attention | Refines emotion-relevant spatial representations across feature layers. |
-| 3 | Frame-level Expert Routing | Predicts sample-adaptive weights and fuses slot-specific expert features. |
-| 4 | Frame-level Distillation | Transfers fused temporal knowledge to individual experts during training. |
-
-## Overall Architecture
-
-<div align="center">
-  <img src="assets/DisMoE_overview.png" alt="Overall architecture of the DisMoE framework" width="98%">
-</div>
-
-<p align="center">
-  <em>Overall architecture of DisMoE. DIS constructs apex-free temporal observations; FERM adaptively aggregates independently parameterized experts; routing regularization and frame-level distillation are applied during training.</em>
-</p>
-
-### Design principle
-
-Unlike conventional mixture-of-experts models that route a shared input among interchangeable experts, DisMoE maintains a fixed correspondence between each temporal sampling slot and its expert. The routing network therefore learns **which temporal observations are more informative for the current sample**, while preserving complementary temporal specialization across experts.
-
-## Model Variants
-
-| Variant | Fusion strategy | Main characteristic |
+| Dataset | Identifier used by the scripts | Annotation / split |
 | :--- | :--- | :--- |
-| **DisMoE-S** | Weighted summation | Compact fused representation with a favorable accuracy–efficiency trade-off. |
-| **DisMoE-C** | Weighted concatenation followed by projection | Preserves more slot-specific temporal information before dimensionality reduction. |
+| CASME II | `casme2` | Subject-independent LOSO |
+| SAMM | `SAMM` | Subject-independent LOSO; 3- or 5-class setting |
+| SMIC | `SMIC` | Subject-independent LOSO |
+| CAS(ME)<sup>3</sup> | `CASME3` | Subject-independent LOSO; configurable class setting |
+| MEVIEW | `meview` | Subject-independent LOSO |
+| DFME | `DFME` | Predefined training / validation split |
 
-Both variants share the same apex-free sampling, temporal expert routing, routing regularization, and frame-level distillation framework.
+Dataset files and face-frame directories should be prepared locally and passed through the corresponding `root_path` and `label_path` arguments. No dataset files are included in this repository.
 
----
+## Training Entry Points
 
-<div align="center">
-  <sub>DisMoE-S · Temporal Expert Routing and Distillation for Apex-Free Micro-Expression Recognition</sub>
-</div>
+The public repository keeps the Python file layout while omitting the implementation contents. The following files correspond to the training entry points used on the server:
+
+| File | Role |
+| :--- | :--- |
+| `scripts/Ad-TMM/main.py` | Main training entry point for the current experiment branch |
+| `scripts/Ad-TMM/option.py` | Command-line arguments and training configuration |
+| `scripts/Ad-TMM/train_epoch.py` | Epoch-level training and validation interface |
+| `scripts/Ad-TMM/data_me.py` | Dataset loading interface |
+| `scripts/Ad-TMM/data_me2.py` | Alternative dataset loading interface |
+| `scripts/DisMoE/main.py` | Main training entry point for the DisMoE branch |
+| `scripts/DisMoE/option.py` | DisMoE training arguments |
+| `scripts/DisMoE/train_epoch.py` | DisMoE epoch-level training interface |
+| `scripts/TMM-ab/main.py` | Ablation experiment entry point |
+| `scripts/TMM-ab/option.py` | Ablation experiment arguments |
+| `scripts/TMM-ab/train_epoch.py` | Ablation training interface |
+| `scripts/me-MoE_cas3/main.py` | CAS(ME)<sup>3</sup> experiment entry point |
+| `scripts/me-MoE_cas3/option.py` | CAS(ME)<sup>3</sup> experiment arguments |
+| `scripts/me-MoE_cas3/train_epoch.py` | CAS(ME)<sup>3</sup> training interface |
+
+## Server Launchers
+
+The following launchers were used for server-side experiments:
+
+| Launcher | Purpose |
+| :--- | :--- |
+| `scripts/retrain7.sh` | Repeated SAMM retraining over fusion settings and seeds |
+| `scripts/run_samm_full_gpu_queue.sh` | Multi-GPU SAMM training queue for 3- or 5-class experiments |
+| `scripts/queue_240.sh` | Queued ablation runs with GPU assignment and output tracking |
+
+Typical launcher arguments are:
+
+```text
+retrain7.sh <fusion_method> <seed> <output_directory>
+run_samm_full_gpu_queue.sh <gpu_id> <class_count>
+queue_240.sh <gpu_id> <wait_name> <run_spec> ...
+```
+
+## Public Snapshot
+
+The `.py` files in `scripts/` are intentionally empty placeholders. The implementation remains on the private training server and is not included in this public snapshot.
