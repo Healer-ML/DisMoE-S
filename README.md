@@ -5,70 +5,106 @@
 ### Temporal Expert Routing and Distillation for Apex-Free Micro-Expression Recognition
 
 <p>
-  <a href="https://github.com/Healer-ML/DisMoE-S">
-    <img src="https://img.shields.io/badge/Task-Micro--Expression%20Recognition-34495e?style=flat-square" alt="Task">
-  </a>
-  <a href="https://github.com/Healer-ML/DisMoE-S">
-    <img src="https://img.shields.io/badge/Setting-Apex--Free-5b7c99?style=flat-square" alt="Setting">
-  </a>
-  <a href="https://github.com/Healer-ML/DisMoE-S">
-    <img src="https://img.shields.io/badge/Framework-PyTorch-8c6d62?style=flat-square" alt="Framework">
-  </a>
+  <img src="https://img.shields.io/badge/Task-Micro--Expression%20Recognition-355070?style=flat-square" alt="Task">
+  <img src="https://img.shields.io/badge/Setting-Apex--Free-5C7AEA?style=flat-square" alt="Setting">
+  <img src="https://img.shields.io/badge/Framework-PyTorch-EE4C2C?style=flat-square" alt="PyTorch">
 </p>
+
+**A temporal mixture-of-experts framework for apex-free micro-expression recognition.**
 
 </div>
 
+---
+
+## Overview
+
+Micro-expression recognition requires modeling subtle and short-lived facial dynamics.
+However, many existing methods rely on apex annotations or predefined temporal priors.
+
+**DisMoE** addresses this limitation by constructing onset-referenced temporal observations
+within the onset--offset interval and assigning them to slot-specific temporal experts.
+A sample-adaptive routing network integrates complementary temporal evidence, while
+frame-level distillation transfers knowledge from the fused representation back to
+individual experts.
+
+> **Key idea:** instead of searching for an apex frame, DisMoE learns which temporal
+> observations are informative for each sample.
+
+---
+
+## Highlights
+
+- **Apex-free temporal modeling**  
+  Dynamic Interval Sampling (DIS) constructs motion observations without apex annotations.
+
+- **Slot-specific temporal experts**  
+  Independent experts capture complementary motion patterns at different temporal positions.
+
+- **Sample-adaptive routing**  
+  The Frame-level Expert Routing Module (FERM) dynamically aggregates temporal expert features.
+
+- **Frame-level distillation**  
+  Fused temporal knowledge is transferred to individual experts to improve prediction consistency.
+
+---
+
+## Architecture
+
+<div align="center">
+  <img src="assets/DisMoE_overview.png"
+       alt="Overall architecture of DisMoE"
+       width="92%">
+</div>
+
 <p align="center">
-  A temporal mixture-of-experts framework for apex-free micro-expression recognition.
+  <sub>
+    <b>DisMoE framework.</b>
+    DIS constructs apex-free temporal observations;
+    FERM adaptively aggregates slot-specific experts;
+    routing regularization and frame-level distillation are applied during training.
+  </sub>
 </p>
 
 ---
 
-## Abstract
-
-Micro-expression recognition aims to identify subtle and short-lived facial movements that reveal genuine emotional states. However, many existing methods rely on apex-frame annotations or predefined temporal priors, limiting their applicability in apex-free settings.
-
-We propose **DisMoE**, a temporal mixture-of-experts framework that models complementary motion patterns within the onset--offset interval without apex annotations. Dynamic Interval Sampling constructs onset-referenced temporal observations, which are processed by slot-specific experts and adaptively fused through frame-level expert routing. Frame-level distillation further transfers knowledge from the fused representation to individual experts, promoting consistent and complementary temporal modeling.
-
-## Contributions
-
-- **Apex-free temporal modeling.** Dynamic Interval Sampling (DIS) constructs onset-referenced motion observations without apex annotations.
-- **Slot-specific temporal experts.** Independent experts model complementary motion patterns at different temporal positions.
-- **Adaptive expert routing.** The Frame-level Expert Routing Module (FERM) performs sample-adaptive fusion of temporal expert features.
-- **Frame-level distillation.** Knowledge from the fused representation is transferred to individual experts to improve temporal consistency.
-
-## Method Overview
-
-| Stage | Module | Function |
-| :---: | :--- | :--- |
-| 1 | Dynamic Interval Sampling | Constructs apex-free temporal observations. |
-| 2 | Continuous Attention | Enhances emotion-relevant spatial representations. |
-| 3 | Frame-level Expert Routing | Adaptively aggregates slot-specific expert features. |
-| 4 | Frame-level Distillation | Transfers fused temporal knowledge to individual experts. |
-
-## Overall Architecture
+## Method
 
 <div align="center">
-  <img src="assets/DisMoE_overview.png" alt="Overall architecture of DisMoE" width="98%">
-</div>
-<p align="center">
-  <em>Overview of DisMoE. DIS constructs apex-free temporal observations, while FERM adaptively aggregates slot-specific experts. Routing regularization and frame-level distillation are applied during training.</em>
-</p>
-### Design Principle
 
-DisMoE maintains a fixed correspondence between each temporal sampling slot and its expert. The routing network therefore learns the relative importance of temporal observations for each sample while preserving expert-specific temporal specialization.
+**Dynamic Interval Sampling**
+&nbsp;&nbsp;→&nbsp;&nbsp;
+**Temporal Experts**
+&nbsp;&nbsp;→&nbsp;&nbsp;
+**Expert Routing**
+&nbsp;&nbsp;→&nbsp;&nbsp;
+**Frame-level Distillation**
+
+</div>
+
+<br>
+
+| Module | Role |
+| :--- | :--- |
+| **DIS** | Constructs onset-referenced temporal observations without apex annotations. |
+| **Continuous Attention** | Enhances emotion-relevant spatial representations. |
+| **FERM** | Performs sample-adaptive aggregation of slot-specific expert features. |
+| **FD** | Transfers fused temporal knowledge to individual experts during training. |
+
+### Expert Routing
+
+Unlike conventional MoE architectures that route a shared input among interchangeable
+experts, DisMoE maintains a fixed correspondence between each temporal sampling slot
+and its expert. The routing network therefore estimates the importance of different
+temporal observations while preserving expert-specific temporal specialization.
+
+---
 
 ## Model Variants
 
-| Variant | Fusion strategy | Characteristic |
-| :--- | :--- | :--- |
-| **DisMoE-S** | Weighted summation | Compact representation with an efficient accuracy--cost trade-off. |
-| **DisMoE-C** | Weighted concatenation with projection | Retains richer slot-specific information before projection. |
+| Variant | Fusion | Description |
+| :---: | :--- | :--- |
+| **DisMoE-S** | Weighted summation | Compact fused representation with lower computational overhead. |
+| **DisMoE-C** | Weighted concatenation + projection | Retains richer slot-specific information before projection. |
 
-Both variants share the same apex-free sampling, temporal expert routing, routing regularization, and frame-level distillation framework.
-
----
-
-<div align="center">
-  <sub>DisMoE-S · Temporal Expert Routing and Distillation for Apex-Free Micro-Expression Recognition</sub>
-</div>
+Both variants share the same **DIS**, temporal expert routing, routing regularization,
+and frame-level distillation framework.
