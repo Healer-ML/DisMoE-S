@@ -51,11 +51,9 @@ We propose **DisMoE**, a temporal mixture-of-experts framework that models compl
 <div align="center">
   <img src="assets/DisMoE_overview.png" alt="Overall architecture of DisMoE" width="98%">
 </div>
-
 <p align="center">
   <em>Overview of DisMoE. DIS constructs apex-free temporal observations, while FERM adaptively aggregates slot-specific experts. Routing regularization and frame-level distillation are applied during training.</em>
 </p>
-
 ### Design Principle
 
 DisMoE maintains a fixed correspondence between each temporal sampling slot and its expert. The routing network therefore learns the relative importance of temporal observations for each sample while preserving expert-specific temporal specialization.
