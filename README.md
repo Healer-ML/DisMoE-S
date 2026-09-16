@@ -80,12 +80,9 @@ train_queue.sh <gpu_id> <class_count>
 ## 4. Model Architecture
 
 <div align="center">
-  <img src="assets/DisMoE_overview.png" alt="DisMoE model architecture" width="98%">
+  <img src="assets/DisMoE_overview.png" alt="DisMoE model architecture" width="98%"><br>
+  <sub><em>Overview of the DisMoE framework used by the training experiments.</em></sub>
 </div>
-
-<p align="center">
-  <em>Overview of the DisMoE framework used by the training experiments.</em>
-</p>
 
 ## 5. Repository Structure
 
