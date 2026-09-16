@@ -1,5 +1,4 @@
 # Runtime environment recorded from the training server.
-# Conda environment: yu
 # Python: 3.8.0
 # GPU: 2 x NVIDIA GeForce RTX 3090 (24 GB)
 # CUDA: 12.1
